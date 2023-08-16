@@ -19,9 +19,15 @@ public class TestController {
 	  }
 
 	  @GetMapping("/labo")
-	  @PreAuthorize("hasRole('LABORATOIRE')")
-	  public String moderatorAccess() {
+	  @PreAuthorize("hasRole('LABORATOIRE') or hasRole('ADMIN')")
+	  public String laboAccess() {
 	    return "LABORATOIRE Board.";
+	  }
+	  
+	  @GetMapping("/pharma")
+	  @PreAuthorize("hasRole('PHARMACIE') or hasRole('ADMIN')")
+	  public String pharmaAccess() {
+	    return "PHARMACIE Board.";
 	  }
 
 	  @GetMapping("/admin")

@@ -21,28 +21,36 @@ import io.jsonwebtoken.*;
 public class JwtUtils {
 	  private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-	  @Value("${bezkoder.app.jwtSecret}")
+	  @Value("${shopwindows.app.jwtSecret}")
 	  private String jwtSecret;
 
-	  @Value("${bezkoder.app.jwtExpirationMs}")
+	  @Value("${shopwindows.app.jwtExpirationMs}")
 	  private int jwtExpirationMs;
 
 	  public String generateJwtToken(Authentication authentication) {
 
 	    UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
+	    // Récupérer l'identifiant de PharmaLabo associé à l'utilisateur
+	   // Long pharmaLaboId = userPrincipal.getPharmaLaboId();
+	    String role = userPrincipal.getAuthorities().toString();
+	 // Créer les claims du token
+	    Claims claims = Jwts.claims().setSubject(userPrincipal.getUsername());
+	   claims.put("role", role);
+	    
 	    return Jwts.builder()
-	        .setSubject((userPrincipal.getUsername()))
-	        .setIssuedAt(new Date())
-	        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-	        .signWith(key(), SignatureAlgorithm.HS256)
-	        .compact();
+	            .setClaims(claims)
+	            .setIssuedAt(new Date())
+	            .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+	            .signWith(key(), SignatureAlgorithm.HS256)
+	            .compact();
 	  }
 	  
 	  private Key key() {
 	    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
 	  }
 
+	  //vérifier le jeton JWT jwt et renverra le nom d'utilisateur s'il est valide
 	  public String getUserNameFromJwtToken(String token) {
 		    return Jwts.parser().setSigningKey(key()).parseClaimsJws(token)
 		            .getBody().getSubject();

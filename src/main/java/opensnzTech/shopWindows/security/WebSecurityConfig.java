@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ import opensnzTech.shopWindows.service.UserDetailsServiceImpl;
 // (securedEnabled = true,
 // jsr250Enabled = true,
 // prePostEnabled = true) // by default
+@EnableWebSecurity
 public class WebSecurityConfig {
 	  @Autowired
 	  UserDetailsServiceImpl userDetailsService;
@@ -84,6 +86,7 @@ public class WebSecurityConfig {
 	        .authorizeHttpRequests(auth -> 
 	          auth.antMatchers("/api/auth/**").permitAll()
 	              .antMatchers("/api/test/**").permitAll()
+	              .antMatchers("/labo/**").permitAll()
 	              .anyRequest().authenticated()
 	        );
 	    
